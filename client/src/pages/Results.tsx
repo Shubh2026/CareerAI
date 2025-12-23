@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRoute, Link } from "wouter";
 import { useAnalysis } from "@/hooks/use-analysis";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,16 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   ArrowLeft, Download, Share2, Target, TrendingUp, AlertTriangle,
-  CheckCircle2, XCircle, Map, Briefcase, ChevronRight
+  CheckCircle2, XCircle, Map, Briefcase, ChevronRight,
+  Bell
 } from "lucide-react";
 import { motion } from "framer-motion";
-
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Results() {
   useEffect(() => {
@@ -22,6 +28,45 @@ export default function Results() {
 
   const stored = localStorage.getItem("analysis_result");
   const result = stored ? JSON.parse(stored) : null;
+
+  const [showExportComingSoon, setShowExportComingSoon] = useState(false);
+
+  const [showComingSoon, setShowComingSoon] = useState(false);
+
+  const getLearningLink = () => {
+    const summary = data.profileSummary.toLowerCase();
+
+    if (summary.includes("frontend") || summary.includes("fullstack")) {
+      return "https://youtube.com/playlist?list=PLWKjhJtqVAbmMuZ3saqRIBimAKIMYkt0E&si=r8D-QkEiuIYrtLK5"; // Frontend
+    }
+
+    if (summary.includes("backend")) {
+      return "https://youtube.com/playlist?list=PLWKjhJtqVAbn21gs5UnLhCQ82f923WCgM&si=lUlXMAQFHB61KoyF"; // Backend
+    }
+
+    if (summary.includes("ai") || summary.includes("ml")) {
+      return "https://youtube.com/playlist?list=PLoROMvodv4rMiGQp3WXShtMGgzqpfVfbU&si=K5fbLv_bQUHwraD2"; // AI/ML
+    }
+
+    if (summary.includes("cloud")) {
+      return "https://youtube.com/playlist?list=PLEiEAq2VkUUIJ3o1tehvtux0_Ynf42CBN&si=fCLZm7w2dmLW368g"; // Cloud / DevOps
+    }
+
+    if (summary.includes("data")) {
+      return "https://youtu.be/ua-CiDNNj30?si=KMeWwedneVBA2s9x"; // Data Science
+    }
+
+    if (summary.includes("ui")) {
+      return "https://youtube.com/playlist?list=PLEiEAq2VkUULzCiDV5VyF7zR6zoDIT_eH&si=2whg272Q5CToVJR6"; // UI / UX
+    }
+
+    if (summary.includes("cyber")) {
+      return "https://youtube.com/playlist?list=PLEiEAq2VkUUJfPOj5nRounXvf3n17PCft&si=FYToB_MoynMSe8gM"; // Cyber Security
+    }
+
+    // fallback
+    return null;
+  };
 
   console.log("RESULTS DATA OBJECT =", result);
 
@@ -53,16 +98,117 @@ export default function Results() {
               <ArrowLeft className="w-4 h-4" /> Back
             </Button>
           </Link>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
+
+          <div className="flex items-center gap-3">
+            {/* Share button */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                alert("Link copied to clipboard");
+              }}
+            >
               <Share2 className="w-4 h-4" /> Share
             </Button>
-            <Button size="sm" className="gap-2">
-              <Download className="w-4 h-4" /> Export PDF
-            </Button>
+
+
+
+            {/* Export + Bell stacked */}
+            <div className="relative flex flex-col items-center">
+              <Button
+                size="sm"
+                className="gap-2"
+                onClick={() => setShowExportComingSoon(true)}
+              >
+                <Download className="w-4 h-4" /> Export PDF
+              </Button>
+              <Dialog open={showExportComingSoon} onOpenChange={setShowExportComingSoon}>
+                <DialogContent className="max-w-sm text-center">
+                  <DialogHeader>
+                    <DialogTitle>Export PDF</DialogTitle>
+                  </DialogHeader>
+
+                  <p className="text-sm text-muted-foreground">
+                    PDF export is coming soon.
+                  </p>
+
+                  <p className="text-sm mt-2">
+                    This feature will support downloadable reports with
+                    AI-powered insights and user history.
+                  </p>
+
+                  <Button className="mt-4" onClick={() => setShowExportComingSoon(false)}>
+                    Got it
+                  </Button>
+                </DialogContent>
+              </Dialog>
+
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    className="absolute -bottom-20
+                 flex items-center justify-center
+                 h-9 w-9 rounded-full
+                 bg-yellow-500/10
+                 border border-yellow-500/30
+                 text-yellow-400
+                 hover:bg-yellow-500/20
+                 hover:scale-105
+                 transition"
+                    aria-label="AI & Gemini info"
+                  >
+                    <Bell className="h-5 w-5" />
+                  </button>
+                </PopoverTrigger>
+
+
+                <PopoverContent
+                  side="bottom"
+                  align="end"
+                  sideOffset={8}
+                  className="w-80 bg-background/95 backdrop-blur border border-white/10 shadow-xl"
+                >
+                  <div className="space-y-3 text-sm">
+                    <p className="font-medium text-foreground">
+                      AI & Gemini Status
+                    </p>
+
+                    <p className="text-muted-foreground">
+                      This report is generated using a deterministic AI logic engine
+                      based on your interests, experience, and confidence.
+                    </p>
+
+                    <p className="text-muted-foreground">
+                      <strong>Gemini API</strong> is integrated at the code level but is
+                      currently limited due to API quota constraints.
+                    </p>
+
+                    <div>
+                      <p className="font-medium text-foreground">Current Approach</p>
+                      <ul className="list-disc ml-4 text-muted-foreground">
+                        <li>Rule-based & heuristic analysis</li>
+                        <li>Transparent and explainable results</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-foreground">Planned Enhancements</p>
+                      <ul className="list-disc ml-4 text-muted-foreground">
+                        <li>Gemini-powered reasoning & personalization</li>
+                        <li>Real-time skill gap analysis</li>
+                        <li>Learning path recommendations with progress tracking</li>
+                      </ul>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
         </div>
-      </header>
+      </header >
 
       <main className="container mx-auto px-4 md:px-6 py-12 space-y-12 max-w-5xl">
 
@@ -264,12 +410,47 @@ export default function Results() {
           <p className="text-lg text-white/80 max-w-2xl mx-auto mb-8">
             Your immediate next step is: <span className="font-semibold text-white">{data.nextAction}</span>
           </p>
-          <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90 h-12 px-8 rounded-full font-semibold">
-            Start Learning Now <ChevronRight className="ml-2 w-4 h-4" />
+          <Button
+            size="lg"
+            variant="secondary"
+            className="bg-white text-primary hover:bg-white/90 h-12 px-8 rounded-full font-semibold"
+            onClick={() => {
+              const link = getLearningLink();
+              if (link) {
+                window.open(link, "_blank");
+              } else {
+                setShowComingSoon(true);
+              }
+            }}
+          >
+            Start Learning Now
+            <ChevronRight className="ml-2 w-4 h-4" />
           </Button>
         </motion.div>
+        <Dialog open={showComingSoon} onOpenChange={setShowComingSoon}>
+          <DialogContent className="max-w-sm text-center">
+            <DialogHeader>
+              <DialogTitle>Personalized Learning Paths</DialogTitle>
+            </DialogHeader>
+
+            <p className="text-sm text-muted-foreground">
+              We’re working on AI-powered learning recommendations tailored exactly
+              to your career goals.
+            </p>
+
+            <p className="text-sm mt-2">
+              This feature will be powered by <strong>Gemini</strong> in future
+              versions.
+            </p>
+
+            <Button className="mt-4" onClick={() => setShowComingSoon(false)}>
+              Got it
+            </Button>
+          </DialogContent>
+        </Dialog>
 
       </main>
-    </div>
+    </div >
   );
 }
+
