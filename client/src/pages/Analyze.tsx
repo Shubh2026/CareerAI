@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userProfileSchema, type UserProfile } from "@shared/schema";
-import { useCreateAnalysis } from "@/hooks/use-analysis";
+import { useAnalysis } from "@/hooks/use-analysis";
 import { AnalysisLoading } from "@/components/AnalysisLoading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,14 +16,16 @@ import { Badge } from "@/components/ui/badge";
 import { X, Sparkles, Briefcase, GraduationCap, Code2 } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { useLocation } from "wouter";
+
 const INTERESTS_OPTIONS = [
-  "Frontend Development", "Backend Systems", "AI/ML", "Data Science", 
-  "Product Management", "UI/UX Design", "Cloud Computing", "DevOps", 
+  "Frontend Development", "Backend Systems", "AI/ML", "Data Science",
+  "Product Management", "UI/UX Design", "Cloud Computing", "DevOps",
   "Cybersecurity", "Blockchain", "Mobile Dev", "Game Dev"
 ];
 
 export default function Analyze() {
-  const { mutate, isPending } = useCreateAnalysis();
+  const { mutate, isPending } = useAnalysis();
   const [interestInput, setInterestInput] = useState("");
 
   const form = useForm<UserProfile>({
@@ -37,9 +39,22 @@ export default function Analyze() {
     },
   });
 
+  const [, setLocation] = useLocation();
+
   const onSubmit = (data: UserProfile) => {
-    mutate(data);
+    console.log("SUBMIT CLICKED", data);
+
+    mutate(data, {
+  onSuccess: (res) => {
+    console.log("MUTATION SUCCESS", res);
+    setLocation("/results");
+  },
+  onError: (err) => {
+    console.error("MUTATION ERROR", err);
+  },
+});
   };
+
 
   const addInterest = (interest: string) => {
     const current = form.getValues("interests");
@@ -81,7 +96,7 @@ export default function Analyze() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
@@ -191,12 +206,12 @@ export default function Analyze() {
                             </Badge>
                           ))}
                         </div>
-                        
+
                         <div className="flex flex-wrap gap-2">
                           {INTERESTS_OPTIONS.filter(i => !field.value?.includes(i)).map(interest => (
-                            <Badge 
-                              key={interest} 
-                              variant="outline" 
+                            <Badge
+                              key={interest}
+                              variant="outline"
                               className="cursor-pointer hover:border-primary hover:text-primary transition-colors"
                               onClick={() => addInterest(interest)}
                             >
@@ -217,10 +232,10 @@ export default function Analyze() {
                     <FormItem>
                       <FormLabel>Technical Skills (Comma separated)</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="e.g. React, Python, SQL, Figma..." 
+                        <Textarea
+                          placeholder="e.g. React, Python, SQL, Figma..."
                           className="bg-background/50 border-white/10 min-h-[100px]"
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -265,5 +280,10 @@ export default function Analyze() {
   );
 }
 
+onSuccess: (result: any) => {
+  localStorage.setItem("analysis_result", JSON.stringify(result));
+}
+
 // Helper to avoid circular dependency in imports
-import { Link } from "wouter";
+import { Link } from "wouter"; import { navigate } from "wouter/use-browser-location";
+

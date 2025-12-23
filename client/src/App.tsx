@@ -10,12 +10,24 @@ import Results from "@/pages/Results";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/analyze" component={Analyze} />
-      <Route path="/results/:id" component={Results} />
-      <Route component={NotFound} />
-    </Switch>
+   <Switch>
+  <Route path="/">
+    <Home />
+  </Route>
+
+  <Route path="/analyze">
+    <Analyze />
+  </Route>
+
+  <Route path="/results">
+    <Results />
+  </Route>
+
+  <Route>
+    <NotFound />
+  </Route>
+</Switch>
+
   );
 }
 
