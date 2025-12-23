@@ -83,6 +83,15 @@ export default function Results() {
 
   const data = result;
 
+  const fitScore =
+    data?.careerFitScore ??
+    Math.min(
+      60 +
+      (data?.skillsGap?.strengths?.length || 0) * 10 +
+      (data?.recommendedCareers?.length || 0) * 5,
+      95
+    );
+
   const extractedName =
     typeof data?.profileSummary === "string"
       ? data.profileSummary.split(",")[0]
@@ -230,7 +239,7 @@ export default function Results() {
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-sm text-muted-foreground uppercase tracking-widest font-bold">Fit Score</span>
-                  <div className="text-5xl font-bold font-display text-primary">{data.careerFitScore}%</div>
+                  <div className="text-5xl font-bold font-display text-primary">{fitScore}%</div>
                 </div>
               </div>
             </CardHeader>
@@ -450,6 +459,9 @@ export default function Results() {
         </Dialog>
 
       </main>
+      <footer className="mt-24 text-center text-sm text-muted-foreground">
+        Made with ❤️ by Team Neural · Powered by Google Tech
+      </footer>
     </div >
   );
 }

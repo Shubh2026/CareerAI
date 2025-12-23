@@ -28,7 +28,7 @@ export default function Home() {
       {/* Hero */}
       <main className="container mx-auto px-6 pt-16 pb-32">
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-8">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -40,8 +40,8 @@ export default function Home() {
             </span>
             AI-Powered Career Intelligence
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -50,7 +50,7 @@ export default function Home() {
             Design your future with <span className="text-gradient-primary">Artificial Intelligence</span>
           </motion.h1>
 
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -59,7 +59,7 @@ export default function Home() {
             Stop guessing. Let our advanced AI analyze your profile, identify skill gaps, and build a personalized roadmap to your dream career.
           </motion.p>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
@@ -114,6 +114,9 @@ export default function Home() {
             </motion.div>
           ))}
         </div>
+        <footer className="mt-24 text-center text-sm text-muted-foreground">
+          Made with ❤️ by Team Neural · Powered by Google Tech
+        </footer>
       </main>
     </div>
   );
