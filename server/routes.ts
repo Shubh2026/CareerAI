@@ -5,6 +5,8 @@ import { api } from "@shared/routes";
 import { z } from "zod";
 import { type UserProfile, type AiResponse } from "@shared/schema";
 
+import { geminiClient } from "./gemini";
+
 // --- MOCK AI ENGINE LOGIC ---
 function generateAiAnalysis(profile: UserProfile): AiResponse {
   // 1. Determine Primary Interest
@@ -196,7 +198,7 @@ function generateAiAnalysis(profile: UserProfile): AiResponse {
 
   // 3. Construct Final Response
   return {
-    profileSummary: `${profile.name}, based on your profile as a ${profile.currentStatus}, you show a strong inclination towards ${primaryInterest}.`,
+    profileSummary: `${profile.name}, based on your profile as a ${profile.currentStatus} with ${profile.yearsExperience} years of experience, you show a strong inclination towards ${primaryInterest}. You have rated your confidence as ${profile.confidence}/5, which suggests you are ${profile.confidence > 3 ? "ready for advanced challenges" : "building your foundational confidence"}.`,
     careerFitScore: Math.min(70 + profile.confidence * 6, 100),
     recommendedCareers,
     skillsGap,
