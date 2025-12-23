@@ -6,33 +6,28 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { 
-  ArrowLeft, Download, Share2, Target, TrendingUp, AlertTriangle, 
-  CheckCircle2, XCircle, Map, Briefcase, ChevronRight 
+import {
+  ArrowLeft, Download, Share2, Target, TrendingUp, AlertTriangle,
+  CheckCircle2, XCircle, Map, Briefcase, ChevronRight
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function Results() {
-  const [, params] = useRoute("/results/:id");
-  const id = params?.id ? parseInt(params.id) : undefined;
-  const { data: result, isLoading, error } = useAnalysis(id);
 
-  // Scroll to top on load
+export default function Results() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-primary font-display text-xl">Loading results...</div>
-      </div>
-    );
-  }
+  console.log("RESULTS FILE LOADED");
 
-  if (error || !result) {
+  const stored = localStorage.getItem("analysis_result");
+  const result = stored ? JSON.parse(stored) : null;
+
+  console.log("RESULTS DATA OBJECT =", result);
+
+  if (!result) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <h2 className="text-2xl font-bold mb-4">Result not found</h2>
         <Link href="/analyze">
           <Button>Create New Analysis</Button>
@@ -41,11 +36,12 @@ export default function Results() {
     );
   }
 
-  const { aiResponse, userInfo } = result;
+  const data = result;
 
-  // Safely parse aiResponse if it's stored as JSON string (though schema says jsonb, drizzle might return object)
-  // Assuming it comes as an object based on standard drizzle behavior with jsonb
-  const data = aiResponse as any; // Type assertion since jsonb is unknown
+  const extractedName =
+    typeof data?.profileSummary === "string"
+      ? data.profileSummary.split(",")[0]
+      : "User";
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -69,9 +65,9 @@ export default function Results() {
       </header>
 
       <main className="container mx-auto px-4 md:px-6 py-12 space-y-12 max-w-5xl">
-        
+
         {/* Profile Summary */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -83,7 +79,7 @@ export default function Results() {
                   <Badge variant="outline" className="mb-2 border-primary/50 text-primary">Analysis Complete</Badge>
                   <CardTitle className="text-3xl md:text-4xl">Career Profile Report</CardTitle>
                   <CardDescription className="text-lg mt-2">
-                    Prepared for <span className="text-foreground font-medium">{userInfo.name}</span> • {new Date().toLocaleDateString()}
+                    Prepared for{" "}<span className="text-foreground font-medium"> {extractedName}</span>{" "}• {new Date().toLocaleDateString()}
                   </CardDescription>
                 </div>
                 <div className="flex flex-col items-end">
@@ -216,10 +212,10 @@ export default function Results() {
             <Map className="w-6 h-6 text-primary" />
             <h2 className="text-2xl font-bold font-display">Your Personalized Roadmap</h2>
           </div>
-          
+
           <div className="relative border-l-2 border-white/10 ml-4 md:ml-6 space-y-12">
             {data.roadmap.map((phase: any, i: number) => (
-              <motion.div 
+              <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -228,13 +224,13 @@ export default function Results() {
               >
                 {/* Timeline Dot */}
                 <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-background border-2 border-primary ring-4 ring-background" />
-                
+
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                     <h3 className="text-xl font-bold font-display">{phase.phase}</h3>
                     <Badge variant="secondary" className="w-fit">{phase.timeline}</Badge>
                   </div>
-                  
+
                   <Card>
                     <CardContent className="pt-6">
                       <div className="mb-4">
@@ -258,7 +254,7 @@ export default function Results() {
         </section>
 
         {/* Next Action */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}

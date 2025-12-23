@@ -9,7 +9,7 @@ import { type UserProfile, type AiResponse } from "@shared/schema";
 function generateAiAnalysis(profile: UserProfile): AiResponse {
   // 1. Determine Primary Interest
   const primaryInterest = profile.interests[0] || "General Tech";
-  
+
   // 2. Mock Career Matches based on interest
   let recommendedCareers = [];
   let roadmap = [];
@@ -196,12 +196,16 @@ function generateAiAnalysis(profile: UserProfile): AiResponse {
 
   // 3. Construct Final Response
   return {
+    userInfo: {
+      name: profile.name,
+      interests: profile.interests,
+    },
     profileSummary: `${profile.name}, based on your profile as a ${profile.currentStatus} with ${profile.yearsExperience} years of experience, you show a strong inclination towards ${primaryInterest}. You have rated your confidence as ${profile.confidence}/5, which suggests you are ${profile.confidence > 3 ? "ready for advanced challenges" : "building your foundational confidence"}.`,
-    careerFitScore: Math.floor(Math.random() * (95 - 75) + 75), // Random score between 75-95
+    careerFitScore,
     recommendedCareers,
     skillsGap,
     roadmap,
-    nextAction: "Review the 'Missing Critical' skills above and pick ONE to start learning this weekend."
+    nextAction,
   };
 }
 
@@ -214,14 +218,13 @@ export async function registerRoutes(
   app.post(api.analysis.create.path, async (req, res) => {
     try {
       const input = api.analysis.create.input.parse(req.body);
-      
+
       // Artificial delay to simulate "AI Thinking"
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       const aiResponse = generateAiAnalysis(input);
-      const savedAnalysis = await storage.createAnalysis(input, aiResponse);
-      
-      res.status(201).json(savedAnalysis);
+
+      res.status(201).json(aiResponse);
     } catch (err) {
       if (err instanceof z.ZodError) {
         return res.status(400).json({
@@ -239,12 +242,12 @@ export async function registerRoutes(
       if (isNaN(id)) {
         return res.status(400).json({ message: "Invalid ID" });
       }
-      
+
       const analysis = await storage.getAnalysis(id);
       if (!analysis) {
         return res.status(404).json({ message: "Analysis not found" });
       }
-      
+
       res.json(analysis);
     } catch (err) {
       res.status(500).json({ message: "Internal Server Error" });
