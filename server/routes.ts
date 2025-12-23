@@ -196,17 +196,15 @@ function generateAiAnalysis(profile: UserProfile): AiResponse {
 
   // 3. Construct Final Response
   return {
-    userInfo: {
-      name: profile.name,
-      interests: profile.interests,
-    },
-    profileSummary: `${profile.name}, based on your profile as a ${profile.currentStatus} with ${profile.yearsExperience} years of experience, you show a strong inclination towards ${primaryInterest}. You have rated your confidence as ${profile.confidence}/5, which suggests you are ${profile.confidence > 3 ? "ready for advanced challenges" : "building your foundational confidence"}.`,
-    careerFitScore,
+    profileSummary: `${profile.name}, based on your profile as a ${profile.currentStatus}, you show a strong inclination towards ${primaryInterest}.`,
+    careerFitScore: Math.min(70 + profile.confidence * 6, 100),
     recommendedCareers,
     skillsGap,
     roadmap,
-    nextAction,
+    nextAction:
+      "Start with the first phase of your roadmap and focus on closing one critical skill gap.",
   };
+
 }
 
 

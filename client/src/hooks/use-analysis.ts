@@ -8,7 +8,7 @@ import { useLocation } from "wouter";
 export function useAnalysis() {
   return useMutation({
     mutationFn: async (profile: UserProfile) => {
-      const res = await fetch(`http://localhost:5000${api.analysis.create.path}`, {
+      const res = await fetch(api.analysis.create.path, {
         method: api.analysis.create.method,
         headers: {
           "Content-Type": "application/json",
