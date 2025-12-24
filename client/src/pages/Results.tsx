@@ -22,23 +22,33 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function Results() {
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  console.log("RESULTS FILE LOADED");
-
-  const queryClient = useQueryClient();
-
-  const analysis =
+  const result =
     queryClient.getQueryData<any>(["analysis-result"]) ??
     (() => {
       const stored = localStorage.getItem("analysis_result");
       return stored ? JSON.parse(stored) : null;
     })();
 
-  const stored = localStorage.getItem("analysis_result");
-  const result = stored ? JSON.parse(stored) : null;
+  console.log("RESULTS DATA OBJECT =", result);
+
+  if (!result) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <h2 className="text-2xl font-bold mb-4">Result not found</h2>
+        <Link href="/analyze">
+          <Button>Create New Analysis</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  console.log("RESULTS FILE LOADED");
 
   const [showExportComingSoon, setShowExportComingSoon] = useState(false);
 
@@ -78,19 +88,6 @@ export default function Results() {
     // fallback
     return null;
   };
-
-  console.log("RESULTS DATA OBJECT =", result);
-
-  if (!result) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <h2 className="text-2xl font-bold mb-4">Result not found</h2>
-        <Link href="/analyze">
-          <Button>Create New Analysis</Button>
-        </Link>
-      </div>
-    );
-  }
 
   const data = result;
 
