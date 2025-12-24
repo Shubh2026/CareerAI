@@ -3,7 +3,8 @@ import { api, buildUrl } from "@shared/routes";
 import type { UserProfile, AnalysisResult } from "@shared/schema";
 import { useLocation } from "wouter";
 
-
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
 
 export function useAnalysis() {
   return useMutation({
@@ -23,9 +24,19 @@ export function useAnalysis() {
       return await res.json();
     },
 
-    onSuccess: (result) => {
-      // persist for Results page
-      localStorage.setItem("analysis_result", JSON.stringify(result));
-    },
-  });
+    onSuccess: async (result) => {
+  localStorage.setItem("analysis_result", JSON.stringify(result));
+
+  const user = auth.currentUser;
+  if (!user) return;
+
+  await setDoc(
+    doc(db, "analyses", `${user.uid}_${Date.now()}`),
+    {
+      uid: user.uid,
+      result,
+      createdAt: serverTimestamp(),
+    }
+  );
+}}  );
 }
