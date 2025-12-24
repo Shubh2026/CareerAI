@@ -19,7 +19,7 @@ function Router() {
     <Analyze />
   </Route>
 
-  <Route path="/results">
+  <Route path="/results/:id">
     <Results />
   </Route>
 

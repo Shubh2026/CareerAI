@@ -45,16 +45,17 @@ export default function Analyze() {
     console.log("SUBMIT CLICKED", data);
 
     mutate(data, {
-  onSuccess: (res) => {
-    console.log("MUTATION SUCCESS", res);
-    setLocation("/results");
-  },
-  onError: (err) => {
-    console.error("MUTATION ERROR", err);
-  },
-});
-  };
+      onSuccess: (res) => {
+        console.log("MUTATION SUCCESS", res);
 
+        // ✅ navigate with ID
+        setLocation(`/results/${res.id}`);
+      },
+      onError: (err) => {
+        console.error("MUTATION ERROR", err);
+      },
+    });
+  };
 
   const addInterest = (interest: string) => {
     const current = form.getValues("interests");

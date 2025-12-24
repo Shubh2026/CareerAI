@@ -21,8 +21,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 import { useQueryClient } from "@tanstack/react-query";
 
+import { useParams } from "wouter";
+
 export default function Results() {
   const queryClient = useQueryClient();
+
+  const Results = () => {
+  const { id } = useParams<{ id: string }>();
+
+  console.log("RESULT ID:", id);
+
+  // fetch(`/api/analysis/${id}`) or use it however you want
+};
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -55,7 +65,7 @@ export default function Results() {
   const [showComingSoon, setShowComingSoon] = useState(false);
 
   const getLearningLink = () => {
-    const summary = data.profileSummary.toLowerCase();
+    const summary = data?.aiResponse?.profileSummary.toLowerCase();
 
     if (summary.includes("frontend") || summary.includes("fullstack")) {
       return "https://youtube.com/playlist?list=PLWKjhJtqVAbmMuZ3saqRIBimAKIMYkt0E&si=r8D-QkEiuIYrtLK5"; // Frontend
@@ -101,8 +111,8 @@ export default function Results() {
     );
 
   const extractedName =
-    typeof data?.profileSummary === "string"
-      ? data.profileSummary.split(",")[0]
+    typeof data?.aiResponse?.profileSummary === "string"
+      ? data?.aiResponse?.profileSummary.split(",")[0]
       : "User";
 
   return (
@@ -253,7 +263,7 @@ export default function Results() {
             </CardHeader>
             <CardContent>
               <p className="text-lg leading-relaxed text-muted-foreground">
-                {data.profileSummary}
+                {data?.aiResponse?.profileSummary}
               </p>
             </CardContent>
           </Card>
@@ -266,7 +276,7 @@ export default function Results() {
             <h2 className="text-2xl font-bold font-display">Recommended Roles</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
-            {data.recommendedCareers.map((career: any, i: number) => (
+            {data?.aiResponse?.recommendedCareers?.map((career: any, i: number) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -20 }}
@@ -321,7 +331,7 @@ export default function Results() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3">
-                  {data.skillsGap.strengths.map((skill: string, i: number) => (
+                  {data?.aiResponse?.skillsGap?.strengths?.map((skill: string, i: number) => (
                     <li key={i} className="flex items-center gap-2 text-sm">
                       <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                       {skill}
@@ -339,7 +349,7 @@ export default function Results() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3">
-                  {data.skillsGap.needsImprovement.map((skill: string, i: number) => (
+                  {data?.aiResponse?.skillsGap?.needsImprovement?.map((skill: string, i: number) => (
                     <li key={i} className="flex items-center gap-2 text-sm">
                       <div className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
                       {skill}
@@ -357,7 +367,7 @@ export default function Results() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3">
-                  {data.skillsGap.missingCritical.map((skill: string, i: number) => (
+                  {data?.aiResponse?.skillsGap?.missingCritical?.map((skill: string, i: number) => (
                     <li key={i} className="flex items-center gap-2 text-sm">
                       <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
                       {skill}
@@ -377,7 +387,7 @@ export default function Results() {
           </div>
 
           <div className="relative border-l-2 border-white/10 ml-4 md:ml-6 space-y-12">
-            {data.roadmap.map((phase: any, i: number) => (
+            {data?.aiResponse?.roadmap?.map((phase: any, i: number) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -20 }}

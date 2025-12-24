@@ -216,25 +216,30 @@ export async function registerRoutes(
 ): Promise<Server> {
 
   app.post(api.analysis.create.path, async (req, res) => {
-    try {
-      const input = api.analysis.create.input.parse(req.body);
+  try {
+    const input = api.analysis.create.input.parse(req.body);
 
-      // Artificial delay to simulate "AI Thinking"
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    // Simulate AI thinking
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const aiResponse = generateAiAnalysis(input);
+    const aiResponse = generateAiAnalysis(input);
 
-      res.status(201).json(aiResponse);
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        return res.status(400).json({
-          message: err.errors[0].message,
-          field: err.errors[0].path.join('.'),
-        });
-      }
-      throw err;
+    // ✅ SAVE + GET ID
+    const result = await storage.createAnalysis(input, aiResponse);
+
+    // ✅ RETURN ID + DATA
+    res.status(201).json(result);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({
+        message: err.errors[0].message,
+        field: err.errors[0].path.join("."),
+      });
     }
-  });
+    throw err;
+  }
+});
+
 
   app.get(api.analysis.get.path, async (req, res) => {
     try {

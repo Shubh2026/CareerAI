@@ -1,14 +1,15 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInAnonymously } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { signInAnonymously } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    apiKey: "AIzaSyDBAVIhFiqX4mwKnGpBICZIdnahQBroKus",
+    authDomain: "ai-career-e4ac2.firebaseapp.com",
+    projectId: "ai-career-e4ac2",
+    storageBucket: "ai-career-e4ac2.firebasestorage.app",
+    messagingSenderId: "218047253424",
+    appId: "1:218047253424:web:85356ada266c799bff6475",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -16,4 +17,8 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-signInAnonymously(auth).catch(() => {});
+export const ensureAnonymousAuth = async () => {
+  if (!auth.currentUser) {
+    await signInAnonymously(auth);
+  }
+};
