@@ -19,12 +19,23 @@ import {
 } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 export default function Results() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   console.log("RESULTS FILE LOADED");
+
+  const queryClient = useQueryClient();
+
+  const analysis =
+    queryClient.getQueryData<any>(["analysis-result"]) ??
+    (() => {
+      const stored = localStorage.getItem("analysis_result");
+      return stored ? JSON.parse(stored) : null;
+    })();
 
   const stored = localStorage.getItem("analysis_result");
   const result = stored ? JSON.parse(stored) : null;

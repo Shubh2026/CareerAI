@@ -3,6 +3,7 @@ import { api } from "@shared/routes";
 import type { UserProfile } from "@shared/schema";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { queryClient } from "@/lib/queryClient";
 
 export function useAnalysis() {
   return useMutation({
@@ -22,8 +23,8 @@ export function useAnalysis() {
     },
 
     onSuccess: async (result) => {
-      // local persistence (for Results page)
       localStorage.setItem("analysis_result", JSON.stringify(result));
+      queryClient.setQueryData(["analysis-result"], result);
 
       // Firestore persistence
       const user = auth.currentUser;
