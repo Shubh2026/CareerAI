@@ -11,12 +11,25 @@ const steps = [
 
 export function AnalysisLoading() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [progress, setProgress] = useState(0);
+
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentStep((prev) => (prev < steps.length - 1 ? prev + 1 : prev));
     }, 2500);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 90) return prev; // never fully complete here
+        return prev + Math.random() * 6;
+      });
+    }, 400);
+
+    return () => clearInterval(interval);
   }, []);
 
   const StepIcon = steps[currentStep].icon;
@@ -28,13 +41,18 @@ export function AnalysisLoading() {
           <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl animate-pulse" />
           <motion.div
             key={currentStep}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.8, opacity: 0, rotate: -5 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            exit={{ scale: 0.8, opacity: 0, rotate: 5 }}
             transition={{ duration: 0.5 }}
             className="relative bg-card border border-white/10 p-8 rounded-full shadow-2xl"
           >
-            <StepIcon className="w-16 h-16 text-primary animate-pulse" />
+            <StepIcon
+              className="w-16 h-16 text-primary"
+              style={{
+                filter: `drop-shadow(0 0 ${Math.min(progress / 8, 12)}px rgb(168 85 247))`,
+              }}
+            />
           </motion.div>
         </div>
 

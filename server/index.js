@@ -1,12 +1,12 @@
 
 import "dotenv/config";
 
-import express, { type Request, Response, NextFunction } from "express";
+import express from "express";
 
 import cors from "cors";
 
-import { registerRoutes } from "./routes";
-import { serveStatic } from "./static";
+import { registerRoutes } from "./routes.js";
+import { serveStatic } from "./static.js";
 import { createServer } from "http";
 
 const app = express();
@@ -15,23 +15,18 @@ app.use(cors());
 
 const httpServer = createServer(app);
 
-declare module "http" {
-  interface IncomingMessage {
-    rawBody: unknown;
-  }
-}
-
 app.use(
   express.json({
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     },
-  }),
+  })
 );
+
 
 app.use(express.urlencoded({ extended: false }));
 
-export function log(message: string, source = "express") {
+export function log(message, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
@@ -45,7 +40,8 @@ export function log(message: string, source = "express") {
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+  let capturedJsonResponse = undefined;
+
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
@@ -71,13 +67,12 @@ app.use((req, res, next) => {
 (async () => {
   await registerRoutes(httpServer, app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err, _req, res, _next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-
     res.status(status).json({ message });
-    throw err;
   });
+
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
