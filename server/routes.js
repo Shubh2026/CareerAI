@@ -1,14 +1,13 @@
-import type { Express } from "express";
-import type { Server } from "http";
-import { storage } from "./storage";
-import { api } from "@shared/routes";
+import express from "express";
+import server from "http";
+import { storage } from "./storage.js";
+import { api } from "../shared/routes.js";
 import { z } from "zod";
-import { type UserProfile, type AiResponse } from "@shared/schema";
 
-import { geminiClient } from "./gemini";
+import { geminiClient } from "./gemini.js";
 
 // --- MOCK AI ENGINE LOGIC ---
-function generateAiAnalysis(profile: UserProfile): AiResponse {
+function generateAiAnalysis(profile) {
   // 1. Determine Primary Interest
   const primaryInterest = profile.interests[0] || "General Tech";
 
@@ -210,10 +209,7 @@ function generateAiAnalysis(profile: UserProfile): AiResponse {
 }
 
 
-export async function registerRoutes(
-  httpServer: Server,
-  app: Express
-): Promise<Server> {
+export async function registerRoutes(httpServer, app) {
 
   app.post(api.analysis.create.path, async (req, res) => {
   try {

@@ -27,12 +27,12 @@ export default function Results() {
   const queryClient = useQueryClient();
 
   const Results = () => {
-  const { id } = useParams<{ id: string }>();
+    const { id } = useParams<{ id: string }>();
 
-  console.log("RESULT ID:", id);
+    console.log("RESULT ID:", id);
 
-  // fetch(`/api/analysis/${id}`) or use it however you want
-};
+    // fetch(`/api/analysis/${id}`) or use it however you want
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -435,7 +435,7 @@ export default function Results() {
         >
           <h2 className="text-3xl font-bold font-display mb-4">Ready to start?</h2>
           <p className="text-lg text-white/80 max-w-2xl mx-auto mb-8">
-            Your immediate next step is: <span className="font-semibold text-white">{data.nextAction}</span>
+            Your immediate next step is: Review the 'Missing Critical' skills above and pick ONE to start learning this weekend. <span className="font-semibold text-white">{data.nextAction}</span>
           </p>
           <Button
             size="lg"
