@@ -1,5 +1,11 @@
 # 🚀 AI Career OS
 
+![Live](https://img.shields.io/badge/status-live-brightgreen)
+![Render](https://img.shields.io/badge/deployed%20on-Render-orange)
+![Google Tech](https://img.shields.io/badge/Google%20Tech-Gemini%20%7C%20Firebase-blue)
+![MIT](https://img.shields.io/badge/license-MIT-purple)
+
+
 AI Career OS is a full-stack AI-powered career guidance platform that provides personalized career analysis, skill-gap insights, and structured learning roadmaps based on a user’s profile.
 
 The project is built as a production-ready MVP, showcasing real-world engineering decisions such as AI fallback handling, unified deployment, and integration of Google technologies.
@@ -115,49 +121,56 @@ This design ensures:
 
 ---
 
-# 📁 Project Structure
+## 📁 Project Structure
+
+```text
 CareerAI/
-│
-├── client/              # Frontend (React + Vite)
+├── client/                     # Frontend (React + Vite)
 │   ├── src/
 │   └── index.html
 │
-├── server/              # Backend (Express)
+├── server/                     # Backend (Express)
 │   ├── index.js
 │   ├── routes.js
 │   ├── storage.js
 │   └── static.js
 │
-├── shared/              # Shared runtime-safe contracts
+├── shared/                     # Shared runtime-safe contracts
 │   └── routes.js
 │
 ├── package.json
 ├── vite.config.ts
 ├── LICENSE
 └── README.md
-
+```
 
 # 🚀 Getting Started (Local Development)
 ## 1️⃣ Clone the repository
+```
 git clone https://github.com/Shubh2026/CareerAI.git
-
 cd CareerAI
+```
 
 ## 2️⃣ Install dependencies
+```
 npm install
+```
 
 ## 3️⃣ Run in development mode
+```
 npm run dev
+```
 
 # 🏭 Production Build & Run (Local)
+```
 npm run build
-
 npm start
-
+```
 
 ## Then open:
-
+```
 http://localhost:8080
+```
 
 # 🌍 Deployment
 
