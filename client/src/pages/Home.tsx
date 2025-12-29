@@ -3,7 +3,56 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Brain, Target, LineChart, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { useState } from "react";
+import AuthModal from "@/components/AuthModal";
+
+import { useEffect } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth, logout } from "@/lib/firebaseAuth";
+
+import { useToast } from "@/hooks/use-toast";
+
 export default function Home() {
+  const [authOpen, setAuthOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const { toast } = useToast();
+  const [authLoading, setAuthLoading] = useState(true);
+const [loggingOut, setLoggingOut] = useState(false);
+
+  useEffect(() => {
+  // Force landing page to always start logged out
+  logout().catch(() => {});
+}, []);
+
+
+  // 🔐 Listen to auth state
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setAuthLoading(false); // 👈 auth resolved
+    });
+
+    return () => unsub();
+  }, []);
+
+
+  // ✅ LOGOUT MUST BE HERE
+  const handleLogout = async () => {
+    await logout();
+
+    toast({
+      title: "Logged out",
+      description: "You have been signed out successfully",
+    });
+
+    // Strict logout: force reset
+    window.location.href = "/";
+  };
+
+  if (authLoading) {
+    return null; // or a small loader / skeleton
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
       {/* Background Gradients */}
@@ -18,12 +67,57 @@ export default function Home() {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold font-display tracking-tight">CareerAI</span>
+          <span className="text-xl font-bold font-display tracking-tight">
+            CareerAI
+          </span>
         </div>
-        <Link href="/analyze">
-          <Button variant="ghost" className="text-muted-foreground hover:text-white">Sign In</Button>
-        </Link>
+
+        {/* Right side */}
+        {user ? (
+          <div className="flex items-center gap-4">
+            {/* Avatar + Hover */}
+            <div className="relative group">
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold cursor-pointer">
+                {user.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt="avatar"
+                    className="w-8 h-8 rounded-full"
+                  />
+                ) : (
+                  (user.email?.[0] || "U").toUpperCase()
+                )}
+              </div>
+
+              {/* Hover card */}
+              <div className="absolute right-0 mt-2 w-max rounded-md bg-black text-white text-xs px-3 py-1 opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                {user.displayName || user.email || "Guest User"}
+              </div>
+            </div>
+
+            {/* Logout */}
+            <Button
+              variant="ghost"
+              className="text-muted-foreground hover:text-white"
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+
+          </div>
+        ) : (
+          <Button
+            variant="ghost"
+            className="text-muted-foreground hover:text-white"
+            onClick={() => setAuthOpen(true)}
+          >
+            Sign In
+          </Button>
+        )}
       </nav>
+
+      {/* Auth Modal */}
+      {authOpen && <AuthModal onClose={() => setAuthOpen(false)} />}
 
       {/* Hero */}
       <main className="container mx-auto px-6 pt-16 pb-32">
@@ -118,6 +212,6 @@ export default function Home() {
           Made with ❤️ by Team Neural · Powered by Google Tech
         </footer>
       </main>
-    </div>
+    </div >
   );
 }
