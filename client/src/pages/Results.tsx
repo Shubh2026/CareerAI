@@ -257,7 +257,7 @@ export default function Results() {
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-sm text-muted-foreground uppercase tracking-widest font-bold">Fit Score</span>
-                  <div className="text-5xl font-bold font-display text-primary">{fitScore}%</div>
+                  <div className="text-5xl font-bold font-display text-primary">{fitScore }%</div>
                 </div>
               </div>
             </CardHeader>
